@@ -1,27 +1,19 @@
 package com.lionel.glassify
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import org.jetbrains.compose.resources.painterResource
+import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.application
 import org.jetbrains.compose.ui.tooling.preview.Preview
-
-import glassify.composeapp.generated.resources.Res
-import glassify.composeapp.generated.resources.compose_multiplatform
 
 @Composable
 @Preview
-fun App() {
+fun App(viewModel: Transparency) {
     MaterialTheme {
+        Text("Glassify está rodando! Use Ctrl+Shift+1 ou Ctrl+Shift+2.")
+    }
+/*    MaterialTheme {
         var showContent by remember { mutableStateOf(false) }
         Column(
             modifier = Modifier
@@ -40,5 +32,5 @@ fun App() {
                 }
             }
         }
-    }
+    }*/
 }
