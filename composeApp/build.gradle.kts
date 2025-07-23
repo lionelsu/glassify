@@ -22,6 +22,10 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+            implementation("net.java.dev.jna:jna:5.17.0")
+            implementation("net.java.dev.jna:jna-platform:5.17.0")
+            implementation("com.github.kwhat:jnativehook:2.2.2")
+            // implementation("androidx.collection:collection:1.4.0")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

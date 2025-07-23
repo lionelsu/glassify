@@ -1,4 +1,10 @@
 package com.lionel.glassify
 
-class transparency {
+import androidx.lifecycle.ViewModel
+
+class Transparency : ViewModel() {
+    fun applyTransparency(value: Int) {
+        println("Aplicando transparência: $value")
+        Platform.setTransparency(value)
+    }
 }
