@@ -10,6 +10,10 @@ class WindowState(
     val title: String? = null
 ) {
     var transparency by mutableStateOf(initialTransparency)
+
     val displayName: String
-        get() = title ?: "Janela ${hwnd.toString(16)}"
+        get() = when {
+            !title.isNullOrBlank() -> title
+            else -> "Janela_${hwnd.toString(16).uppercase()}"
+        }
 }

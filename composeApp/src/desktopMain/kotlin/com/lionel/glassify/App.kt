@@ -1,30 +1,12 @@
 package com.lionel.glassify
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Window
-import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Slider
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,15 +15,9 @@ fun App(viewModel: Transparency) {
     var expanded by remember { mutableStateOf(false) }
     val windows by remember { derivedStateOf { viewModel.windows.sortedBy { it.displayName } } }
 
-    LaunchedEffect(Unit) {
-        println("APP INICIADO - Janelas: ${viewModel.windows.size}")
-    }
-
     MaterialTheme {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("Janelas capturadas: ${viewModel.windows.size}",
-                color = MaterialTheme.colorScheme.primary)
-
+            // Dropdown
             ExposedDropdownMenuBox(
                 expanded = expanded,
                 onExpandedChange = { expanded = !expanded }
@@ -64,13 +40,13 @@ fun App(viewModel: Transparency) {
                 ) {
                     if (windows.isEmpty()) {
                         DropdownMenuItem(
-                            text = { Text("Nenhuma janela capturada") },
+                            text = { SafeText("Nenhuma janela capturada") },
                             onClick = { expanded = false }
                         )
                     } else {
                         windows.forEach { window ->
                             DropdownMenuItem(
-                                text = { Text(window.displayName) },
+                                text = { SafeText(window.displayName) },
                                 onClick = {
                                     viewModel.selectWindow(window)
                                     expanded = false
@@ -95,29 +71,21 @@ fun App(viewModel: Transparency) {
                             Platform.setTransparency(window.hwnd, newValue.toInt())
                         },
                         valueRange = 0f..255f,
-                        steps = 254,
-                        thumb = {
-                            Box(
-                                modifier = Modifier
-                                    .size(16.dp)
-                                    .background(
-                                        color = MaterialTheme.colorScheme.primary,
-                                        shape = CircleShape
-                                    )
-                            )
-                        }
+                        steps = 254
                     )
-                    Text(
-                        "Transparência: ${window.transparency} (${(window.transparency * 100 / 255).toInt()}%)",
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                    )
+                    SafeText("Transparência: ${window.transparency}")
                 }
-            } ?: run {
-                Text(
-                    "Selecione uma janela ou use Ctrl+Shift+1",
-                    color = MaterialTheme.colorScheme.secondary
-                )
             }
         }
     }
+}
+
+@Composable
+fun SafeText(text: String, modifier: Modifier = Modifier) {
+    Text(
+        text = text,
+        modifier = modifier,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis
+    )
 }

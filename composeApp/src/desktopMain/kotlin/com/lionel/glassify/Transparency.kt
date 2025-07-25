@@ -18,10 +18,7 @@ class Transparency : ViewModel() {
         try {
             val hwnd = User32.INSTANCE.GetForegroundWindow()
             val hwndInt = Pointer.nativeValue(hwnd.pointer).toInt()
-
-            val buffer = CharArray(512)
-            User32.INSTANCE.GetWindowText(hwnd, buffer, buffer.size)
-            val title = buffer.joinToString("").takeIf { it.isNotBlank() }
+            val title = Platform.getWindowTitle(hwnd)
 
             val existingWindow = _windows.firstOrNull { it.hwnd == hwndInt }
 
@@ -36,7 +33,7 @@ class Transparency : ViewModel() {
                 Platform.setTransparency(hwndInt, value)
             }
 
-            println("Janelas: ${_windows.size}, Selecionada: ${selectedWindow?.hwnd}")
+            println("Título da janela: ${title ?: "Sem título"}")
 
         } catch (e: Exception) {
             println("Erro grave: ${e.stackTraceToString()}")
