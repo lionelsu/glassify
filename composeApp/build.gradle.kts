@@ -25,6 +25,9 @@ kotlin {
             implementation("net.java.dev.jna:jna:5.17.0")
             implementation("net.java.dev.jna:jna-platform:5.17.0")
             implementation("com.github.kwhat:jnativehook:2.2.2")
+            implementation(compose.materialIconsExtended)
+            implementation(compose.material3)
+            // implementation(libs.androidx.material3)
             // implementation("androidx.collection:collection:1.4.0")
         }
         commonTest.dependencies {
