@@ -42,14 +42,8 @@ compose.desktop {
         mainClass = "com.lionel.glassify.MainKt"
 
         nativeDistributions {
-            targetFormats(TargetFormat.Msi)
-            packageName = "Glassify"
-            packageVersion = "1.0.0"
+            includeAllModules = true  // Isso inclui a JVM!
 
-            // Configuração para incluir JVM
-            includeAllModules = true
-
-            // Módulos Java necessários
             modules(
                 "java.base",
                 "java.desktop",
@@ -58,15 +52,8 @@ compose.desktop {
 
             // Configurações específicas para Windows
             windows {
-                // Caminho absoluto para o ícone (crie esta pasta e arquivo)
-                //iconFile.set(project.file("icons/icon.ico").absoluteFile)
-                menuGroup = "Acessibilidade"
-                upgradeUuid = "5B4C1DD0-77F5-4A6B-8B8D-3D8F1E7A1234"
-                perUserInstall = true
-
-                // Configurações para evitar erros comuns
-                menu = true
-                shortcut = true
+                console = false
+                //iconFile.set(project.file("icons/icon.ico"))
             }
         }
     }
