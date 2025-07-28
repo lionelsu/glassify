@@ -27,6 +27,7 @@ kotlin {
             implementation("net.java.dev.jna:jna-platform:5.17.0")
             implementation("com.github.kwhat:jnativehook:2.2.2")
             implementation(compose.materialIconsExtended)
+            implementation("com.dorkbox:SystemTray:4.4")
         }
 
         desktopMain.dependencies {
