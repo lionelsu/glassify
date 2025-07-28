@@ -7,10 +7,9 @@ plugins {
 }
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(21)
 
     jvm("desktop") {
-        // Configurações específicas do target
     }
     sourceSets {
         val desktopMain by getting
@@ -42,7 +41,7 @@ compose.desktop {
         mainClass = "com.lionel.glassify.MainKt"
 
         nativeDistributions {
-            includeAllModules = true  // Isso inclui a JVM!
+            includeAllModules = true
 
             modules(
                 "java.base",
@@ -50,7 +49,6 @@ compose.desktop {
                 "jdk.unsupported"
             )
 
-            // Configurações específicas para Windows
             windows {
                 console = false
                 //iconFile.set(project.file("icons/icon.ico"))

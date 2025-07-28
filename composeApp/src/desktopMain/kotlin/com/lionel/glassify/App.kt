@@ -2,21 +2,30 @@ package com.lionel.glassify
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Window
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun App(viewModel: Transparency) {
     var expanded by remember { mutableStateOf(false) }
+    var showConfirmDialog by remember { mutableStateOf(false) } // Adicionado esta linha
     val windows by remember { derivedStateOf { viewModel.windows.sortedBy { it.displayName } } }
+
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     MaterialTheme {
         Column(modifier = Modifier.padding(16.dp)) {
+            SnackbarHost(hostState = snackbarHostState)
+
             // Dropdown
             ExposedDropdownMenuBox(
                 expanded = expanded,
@@ -62,19 +71,79 @@ fun App(viewModel: Transparency) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            viewModel.selectedWindow?.let { window ->
+            viewModel.selectedWindow?.let { selectedWindow ->
                 Column {
-                    Slider(
-                        value = window.transparency.toFloat(),
-                        onValueChange = { newValue ->
-                            window.transparency = newValue.toInt()
-                            Platform.setTransparency(window.hwnd, newValue.toInt())
+                    Button(
+                        onClick = {
+                            viewModel.removeWindow(selectedWindow)
+                            scope.launch {
+                                snackbarHostState.showSnackbar("Janela removida")
+                            }
                         },
-                        valueRange = 0f..255f,
-                        steps = 254
-                    )
-                    SafeText("Transparência: ${window.transparency}")
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.errorContainer,
+                            contentColor = MaterialTheme.colorScheme.onErrorContainer
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Remover"
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Remover Janela Selecionada")
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
+            }
+
+            // Botão para limpar tudo
+            if (viewModel.windows.isNotEmpty()) {
+                Button(
+                    onClick = { showConfirmDialog = true },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error,
+                        contentColor = MaterialTheme.colorScheme.onError
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.DeleteForever,
+                        contentDescription = "Remover tudo"
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Remover Todas as Janelas")
+                }
+            }
+
+            // Diálogo de confirmação
+            if (showConfirmDialog) {
+                AlertDialog(
+                    onDismissRequest = { showConfirmDialog = false },
+                    title = { Text("Confirmar Remoção") },
+                    text = { Text("Deseja remover todas as janelas da lista?") },
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                viewModel.removeAllWindows()
+                                showConfirmDialog = false
+                                scope.launch {
+                                    snackbarHostState.showSnackbar("Todas as janelas foram removidas")
+                                }
+                            }
+                        ) {
+                            Text("Confirmar")
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(
+                            onClick = { showConfirmDialog = false }
+                        ) {
+                            Text("Cancelar")
+                        }
+                    }
+                )
             }
         }
     }

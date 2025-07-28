@@ -43,4 +43,20 @@ class Transparency : ViewModel() {
     fun selectWindow(window: WindowState) {
         selectedWindow = window
     }
+    fun removeWindow(window: WindowState) {
+        Platform.setTransparency(window.hwnd, 255)
+        _windows.remove(window)
+
+        if (selectedWindow == window) {
+            selectedWindow = null
+        }
+    }
+
+    fun removeAllWindows() {
+        _windows.forEach { window ->
+            Platform.setTransparency(window.hwnd, 255)
+        }
+        _windows.clear()
+        selectedWindow = null
+    }
 }
