@@ -4,15 +4,17 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
-    alias(libs.plugins.composeHotReload)
 }
 
 kotlin {
-    jvm("desktop")
-    
+    jvmToolchain(17)
+
+    jvm("desktop") {
+        // Configurações específicas do target
+    }
     sourceSets {
         val desktopMain by getting
-        
+
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
@@ -26,13 +28,8 @@ kotlin {
             implementation("net.java.dev.jna:jna-platform:5.17.0")
             implementation("com.github.kwhat:jnativehook:2.2.2")
             implementation(compose.materialIconsExtended)
-            implementation(compose.material3)
-            // implementation(libs.androidx.material3)
-            // implementation("androidx.collection:collection:1.4.0")
         }
-        commonTest.dependencies {
-            implementation(libs.kotlin.test)
-        }
+
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
@@ -40,15 +37,41 @@ kotlin {
     }
 }
 
-
 compose.desktop {
     application {
         mainClass = "com.lionel.glassify.MainKt"
 
         nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.lionel.glassify"
+            targetFormats(TargetFormat.Msi)
+            packageName = "Glassify"
             packageVersion = "1.0.0"
+
+            // Configuração para incluir JVM
+            includeAllModules = true
+
+            // Módulos Java necessários
+            modules(
+                "java.base",
+                "java.desktop",
+                "jdk.unsupported"
+            )
+
+            // Configurações específicas para Windows
+            windows {
+                // Caminho absoluto para o ícone (crie esta pasta e arquivo)
+                //iconFile.set(project.file("icons/icon.ico").absoluteFile)
+                menuGroup = "Acessibilidade"
+                upgradeUuid = "5B4C1DD0-77F5-4A6B-8B8D-3D8F1E7A1234"
+                perUserInstall = true
+
+                // Configurações para evitar erros comuns
+                menu = true
+                shortcut = true
+            }
         }
     }
+}
+
+tasks.register("packageAll") {
+    dependsOn("packageMsi")
 }
